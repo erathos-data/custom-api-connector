@@ -1,0 +1,22 @@
+# Child endpoint - called once per record returned by example_orders, instead of being
+# synced on its own. `dependency.field` (this parent's `id`) is injected here as <order_id>.
+dependency:
+  endpoint: example_orders
+  field: id
+  as: order_id
+
+request:
+  method: GET
+  endpoint: "/orders/<order_id>/line_items"
+
+response:
+  path: [results]
+  primary_key: [id]
+
+fields:
+  - name: id
+    type: string
+  - name: sku
+    type: string
+  - name: quantity
+    type: integer

@@ -1,0 +1,18 @@
+# Parent endpoint - synced independently, like any other endpoint.
+request:
+  method: GET
+  endpoint: "/orders"
+  params:
+    page: "<page>"
+
+response:
+  path: [results]
+  primary_key: [id]
+  pagination:
+    type: page
+
+fields:
+  - name: id
+    type: string
+  - name: status
+    type: string

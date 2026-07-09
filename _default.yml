@@ -1,0 +1,88 @@
+# Connector-wide defaults. Any key here can be overridden inside an
+# individual endpoint file (e.g. companies.yml overrides cursor_timestamp_format).
+name: "API Name"
+
+# Credentials the platform collects from the user and stores. Each entry becomes a
+# placeholder usable in request.headers/params/json/query anywhere in the connector:
+# `<name>` for secret/variable, `<name.access_token>`/`<name.refresh_token>` for oauth2.
+# At most one `type: oauth2` entry is allowed.
+authentication:
+  - name: api_key
+    type: secret       # secret = masked in the UI, variable = shown in the clear
+    required: true
+
+  # Full shape for an OAuth2 entry - uncomment and adapt if your API uses OAuth instead of (or in
+  # addition to) a static key. client_id/client_secret aren't special cases 
+  # they're declared as their own secret/variable entries, then referenced
+  # via <client_id>/<client_secret> in grant/refresh/revoke requests like any other credential.
+  # - name: client_id
+  #   type: variable
+  #   required: true
+  # - name: client_secret
+  #   type: secret
+  #   required: true
+  # - name: oauth
+  #   type: oauth2
+  #   required: true
+  #   access_token_expires_in_seconds: 3600
+  #   refresh_token_expires_in_seconds: 2592000
+  #   authorization:
+  #     url: "https://api.example.com/oauth/authorize?state=<state>&redirect_url=<redirect_url>"
+  #     callback:
+  #       code: {path: [params, code]}
+  #       state: {path: [params, state]}
+  #   grant:
+  #     request:
+  #       # The code captured via authorization.callback.code is injected automatically -
+  #       # no placeholder needed for it here.
+  #       method: POST
+  #       url: "https://api.example.com/oauth/token"
+  #       json: '{"grant_type": "authorization_code", "client_id": "<client_id>", "client_secret": "<client_secret>", "code": "<code>", "redirect_url": "<redirect_url>"}'
+  #     response:
+  #       access_token: {path: [access_token]}
+  #       refresh_token: {path: [refresh_token]}
+  #   refresh:
+  #     request:
+  #       # <oauth.refresh_token> below is this entry's own stored refresh token -
+  #       # substituted automatically the same way it would be in any endpoint's request.
+  #       method: POST
+  #       url: "https://api.example.com/oauth/token"
+  #       json: '{"grant_type": "refresh_token", "client_id": "<client_id>", "client_secret": "<client_secret>", "refresh_token": "<oauth.refresh_token>"}'
+  #     response:
+  #       access_token: {path: [access_token]}
+  #       refresh_token: {path: [refresh_token]}
+  #   revoke:
+  #     request:
+  #       method: POST
+  #       url: "https://api.example.com/oauth/revoke"
+
+request:
+  url_base: "https://api.example.com"
+  method: GET
+  headers:
+    Authorization: "Bearer <api_key>"
+  cursor_timestamp_format: "%Y-%m-%d %H:%M:%S"
+
+response:
+  # Connector-wide fallback for specific status codes. `message` can be a
+  # static string, or `{path: [path]}` to pull it out of the response body
+  # `ignore: true` means "not actually an error" - e.g. record id has been deleted.
+  http_codes:
+    429:
+      message: "Rate limited by the API - will retry with backoff."
+    404:
+      ignore: true
+
+# Lightweight request used only to validate stored credentials
+# (replaces today's hardcoded Python "connection check").
+validation:
+  endpoint: "/me"
+  request:
+    method: GET
+    # headers/params/json are all optional - only set them if this check needs something
+    # beyond request.headers, e.g. a param the API requires even on a plain "who am I" call:
+    # headers:
+    #   X-Extra-Header: "some-value"
+    # params:
+    #   verbose: "false"
+    # json: '{"key": "value"}'

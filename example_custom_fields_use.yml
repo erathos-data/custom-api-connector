@@ -1,0 +1,55 @@
+# REST endpoint, token pagination, linked to a custom-fields endpoint.
+# Adapted from the real HubSpot "companies" endpoint.
+#
+# <fields> in the json body below is auto-filled from this file's own
+# `fields:` list plus whatever custom_field_endpoint (below) discovers at
+# sync time - no need to list property names twice. Default rendering is
+# "id", "name", "domain", ... (comma-separated, quoted) - see the README's
+# "Field-list placeholder" section to use a different format.
+request:
+  method: POST
+  endpoint: "/companies"
+  json: >
+    {"limit": "50", "after": "<page>",
+     "sorts": [{"propertyName": "createdate", "direction": "ASCENDING"}],
+     "filters": [
+       {"propertyName": "hs_lastmodifieddate", "operator": "GTE", "value": "<hs_lastmodifieddate>"}
+     ],
+     "properties": [<fields>]}
+
+
+response:
+  path: [results]
+  primary_key: [id]
+  custom_field_endpoint: example_custom_fields
+
+  pagination:
+    type: token
+    path: [paging, next, after]
+
+  # Overrides the connector-wide default in _default.yml for this endpoint only.
+  # API returns a 500 (not an empty page) once you page past the last
+  # result here - ignore: true means "treat as end-of-pagination", not a failure.
+  http_codes:
+    500:
+      ignore: true
+      message: "Reached last page (API returns 500 past the final page)."
+    502:
+      message:
+        path: [error]  # derive the message from the response body's "error" key
+
+
+fields:
+  - name: id
+    type: string
+  - name: name
+    type: string
+    nullable: true
+  - name: domain
+    type: string
+    nullable: true
+  - name: hs_lastmodifieddate
+    type: timestamp
+    cursor: true
+    cursor_timestamp_format: "%Y-%m-%dT%H:%M:%S.000Z"  # search API needs ISO+Z here,
+    # unlike the connector default in _default.yml (used by e.g. owners.yml)

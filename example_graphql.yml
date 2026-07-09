@@ -1,0 +1,61 @@
+# GraphQL endpoint, token pagination (via endCursor).
+# Adapted from the real Linear "issues" endpoint.
+request:
+  method: POST
+  endpoint: "/graphql"
+  query: >
+    {
+      issues(first: 250 <page> filter: {updatedAt: {gte: "<updatedAt>"}}) {
+        pageInfo { hasNextPage endCursor }
+        nodes {
+          id title number createdAt updatedAt
+          state { id name }
+          team { id name }
+          assignee { id email }
+          parent { id title }
+          children { totalCount }
+        }
+      }
+    }
+
+
+response:
+  path: [data, issues, nodes]
+  primary_key: [id]
+
+  pagination:
+    type: token
+    path: [data, issues, pageInfo, endCursor]
+
+
+fields:
+  - name: id
+    type: string
+  - name: title
+    type: string
+    nullable: true
+  - name: number
+    type: integer
+  - name: createdAt
+    type: timestamp
+  - name: updatedAt
+    type: timestamp
+    cursor: true
+    cursor_timestamp_format: "%Y-%m-%dT%H:%M:%S.000Z"  # overrides the connector default for this cursor
+  - name: state.id
+    type: string
+    nullable: true
+  - name: state.name
+    type: string
+    nullable: true
+  - name: team.id
+    type: string
+    nullable: true
+  - name: assignee.id
+    type: string
+    nullable: true
+  - name: parent.id
+    type: string
+    nullable: true
+  - name: children.totalCount
+    type: integer

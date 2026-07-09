@@ -1,0 +1,27 @@
+# REST endpoint, sliding time-window pagination.
+request:
+  method: GET
+  endpoint: "/events"
+  params:
+    start_date: "<timepage_start>"
+    end_date: "<timepage_end>"
+
+response:
+  path: [results]
+  primary_key: [id]
+
+  # Used for APIs that only support filtering by a time range rather
+  # than an offset/token/page (e.g. event-log style endpoints).
+  pagination:
+    type: time
+    cursor_timestamp_format: "%s000"  # required, milliseconds unix timestamp expected by this API
+    history_size_in_days: 365 # optional, defaults to 365
+    window_size_in_days: 30 # required
+    sort: asc
+
+fields:
+  - name: id
+    type: string
+  - name: at 
+    type: timestamp
+    cursor: true # replaces history_size_in_days as timepage_start

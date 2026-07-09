@@ -1,0 +1,17 @@
+# Custom-fields metadata endpoint, linked from ../example_custom_fields_use.yml via
+# `response.custom_field_endpoint: example_custom_fields`.
+#
+# No `fields:` list here - the schema is discovered at sync time from this
+# endpoint's response, then mapped into field metadata via reverse_mapping.
+request:
+  method: GET
+  endpoint: "/properties"
+
+response:
+  path: [results]
+  custom_field:
+    field_key: name # required
+    field_name: label # required
+    field_type: type # required
+    is_nullable: ~
+    description: description

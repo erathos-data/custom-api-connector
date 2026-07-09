@@ -1,0 +1,22 @@
+# REST endpoint, offset-number pagination.
+request:
+  method: GET # required
+  endpoint: "/products" # required
+  params:
+    page: "<page>"
+
+response:
+  path: [0, results]  # list index 0, then the "results" key - path supports both
+
+  # total_count tells the caller when to stop requesting the next page.
+  pagination:
+    type: offset # required
+    offset_size: 100 # optional: defaults to 100
+    initial_value: 0 # optional, defaults to 0 when offset
+    path: [metadata, total_count] # optional, if empty request until empty response
+
+fields: # required
+  - name: id # required
+    type: string # required
+  - name: name
+    type: string

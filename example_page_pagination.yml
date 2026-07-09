@@ -1,0 +1,21 @@
+# REST endpoint, page-number pagination.
+request:
+  method: GET
+  endpoint: "/users"
+  params:
+    page: "<page>"
+
+response:
+  path: [0, results]  # list index 0, then the "results" key - path supports both
+
+  # total_pages tells the caller when to stop requesting the next page.
+  pagination:
+    type: page
+    initial_value: 1 # optional, defaults to 1 when page
+    path: [metadata, total_pages]
+
+fields:
+  - name: id
+    type: string
+  - name: name
+    type: string
