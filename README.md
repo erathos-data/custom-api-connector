@@ -9,15 +9,15 @@
   <h1 align="center">Custom API Connector Template</h1>
 
   <p align="center">
-    <a href="https://github.com/erathos-alexandria/custom-api-connector#adding-a-new-api-connector"><strong>New Connector</strong></a>
+    <a href="https://github.com/erathos-data/custom-api-connector#adding-a-new-api-connector"><strong>New Connector</strong></a>
     ·
-    <a href="https://github.com/erathos-alexandria/custom-api-connector#authentication-reference"><strong>Authentication</strong></a>
+    <a href="https://github.com/erathos-data/custom-api-connector#authentication-reference"><strong>Authentication</strong></a>
     ·
-    <a href="https://github.com/erathos-alexandria/custom-api-connector#pagination-reference"><strong>Pagination</strong></a>
+    <a href="https://github.com/erathos-data/custom-api-connector#pagination-reference"><strong>Pagination</strong></a>
     ·
-    <a href="https://github.com/erathos-alexandria/custom-api-connector#variable-placeholders"><strong>Variable Placeholders</strong></a>
+    <a href="https://github.com/erathos-data/custom-api-connector#variable-placeholders"><strong>Variable Placeholders</strong></a>
     ·
-    <a href="https://github.com/erathos-alexandria/custom-api-connector#custom-field-endpoints"><strong>Custom Fields</strong></a>
+    <a href="https://github.com/erathos-data/custom-api-connector#custom-field-endpoints"><strong>Custom Fields</strong></a>
   </p>
 </p>
 </p>
