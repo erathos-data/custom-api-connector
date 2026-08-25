@@ -110,7 +110,7 @@ Reference: [`_default.yml`](./_default.yml)
 | `request.headers` | Optional | Headers sent on every request (e.g. auth header). Use `<name>` (or `<name.access_token>`/`<name.refresh_token>` for OAuth) to inject a stored credential - see "Authentication reference". |
 | `request.cursor_timestamp_format` | Optional | Default format to convert a cursor field's value into whatever string the API expects, when an endpoint doesn't set its own (see Step 5). |
 | `response.http_codes` | Optional | Connector-wide status-code handling, extendable per endpoint. See "Variable Placeholders" below for `message`. |
-| `validation.endpoint_url` | Optional | Path used to sanity-check stored credentials before a sync starts. |
+| `validation.endpoint` | Optional | Path used to sanity-check stored credentials before a sync starts. |
 | `validation.request.method` | Optional | Method for that check, usually `GET`. |
 | `validation.request.headers` | Optional | Extra/overriding headers for just this check, if it needs something beyond `request.headers` (e.g. an API that validates credentials via a different auth scheme than normal requests use). |
 | `validation.request.params` | Optional | Query params for this check, if the endpoint needs any. |
@@ -183,7 +183,7 @@ A list, one entry per field you want synced.
 | Key | Required? | Meaning |
 |---|---|---|
 | `name` | **Required** | Field name as it appears in the response. For nested values, use dot notation, e.g. `state.name` for `{"state": {"name": "..."}}`. |
-| `type` | **Required** | One of: `text`, `integer`, `float`, `boolean`, `timestamp`, `json`. Use `json` for a field you want stored as raw nested data rather than flattened. |
+| `type` | **Required** | One of: `string`, `integer`, `float`, `boolean`, `date`, `time`, `timestamp`, `unix_timestamp`, `json`. Use `json` for a field you want stored as raw nested data rather than flattened. |
 | `nullable` | Optional | Set `true` if the API can omit this field or return `null`. Defaults to not-nullable. |
 | `cursor` | Optional | Set `true` if this field is used for incremental sync ("give me records updated after X"). More than one field can be a cursor at once (composite cursor). Defaults to `false`. |
 | `cursor_timestamp_format` | Optional | Only meaningful when `cursor: true`. Converts the stored (ISO) timestamp into whatever format your API's filter expects — see the examples in `example_graphql.yml` / `example_custom_fields_use.yml`. Falls back to the connector-wide default if omitted. |
