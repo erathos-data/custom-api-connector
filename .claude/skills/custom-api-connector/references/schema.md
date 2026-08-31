@@ -1,8 +1,8 @@
 # Schema reference
 
-Every key below is transcribed from `validate_connector.py`, which is the authority. Where the
-template's README disagrees, this file follows the validator — the README has at least two known
-errors (`type: text`, `validation.endpoint_url`), noted inline.
+Every key below is transcribed from `validate_connector.py`, which is the authority. Where anything
+disagrees with it — prose documentation, an example file, your recollection of another connector —
+the validator wins. If you're unsure whether a key exists, grep it there rather than inferring.
 
 **Contents**
 - [File layout and naming](#file-layout-and-naming)
@@ -72,8 +72,9 @@ an endpoint's `request`.
 
 Allowed keys: `endpoint`, `request`.
 
-> The README's Step 4 table calls this `validation.endpoint_url`. That is wrong — the validator only
-> accepts `endpoint`, and `endpoint_url` produces an `unknown key` warning and is then ignored.
+> The key is `endpoint`, not `endpoint_url`. This one is worth care: an unknown key produces a
+> *warning* and is then ignored, so the misspelling leaves the connector with no credential check
+> while the validator still reports 0 errors.
 
 `validation.request` allows `method`, `headers`, `params`, `json` — all optional, no `endpoint`
 key inside it. Use it only when the credential check needs something beyond the connector-wide
@@ -279,7 +280,8 @@ A non-empty list. Each entry allows `name`, `type`, `nullable`, `cursor`, `curso
 
 `boolean`, `date`, `float`, `integer`, `json`, `string`, `time`, `timestamp`, `unix_timestamp`
 
-> The README lists `text` as a type. `text` is **not** valid and fails validation — use `string`.
+> There is no `text` type — use `string`. This is the most common type mistake, and unlike the
+> `endpoint_url` case it fails loudly, as an error.
 
 Use `json` when you want a nested object or array stored whole. To pull individual scalars out of a
 nested object instead, list them with dot notation.

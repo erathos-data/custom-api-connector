@@ -164,7 +164,7 @@ fields:
 
 Omit `pagination` entirely for endpoints that genuinely return everything in one request. For `offset`/`page`, `path` (total count / total pages) is optional — without it the connector pages until it gets an empty response, which is fine and often more robust than trusting a total the API computes lazily.
 
-**Field types** — the validator accepts exactly: `string`, `integer`, `float`, `boolean`, `timestamp`, `date`, `time`, `unix_timestamp`, `json`. Use `string` for text (`text` is **not** valid — the README says otherwise and is wrong). Use `json` for a nested object or array you want stored whole rather than flattened. Reach nested scalars with dot notation instead: `state.name` for `{"state": {"name": "open"}}`.
+**Field types** — the validator accepts exactly: `string`, `integer`, `float`, `boolean`, `timestamp`, `date`, `time`, `unix_timestamp`, `json`. Use `string` for text — there is no `text` type. Use `json` for a nested object or array you want stored whole rather than flattened. Reach nested scalars with dot notation instead: `state.name` for `{"state": {"name": "open"}}`.
 
 Set `nullable: true` on anything the API can omit or return `null` for. Being wrong here is expensive: a non-nullable field that arrives null fails the row.
 
@@ -186,13 +186,13 @@ python validate_connector.py .
 
 It needs PyYAML (`pip install pyyaml`) — the repo doesn't declare this, so a `ModuleNotFoundError: No module named 'yaml'` on first run is expected, not a problem with your connector.
 
-Errors fail the run; warnings don't. But warnings are where the quiet damage lives: an unknown key is *ignored*, so a `validation.endpoint_url` copied from the README warns once and leaves the connector with no credential check at all, while the run still exits 0. Resolve every warning or consciously accept it — don't read "0 errors" as "correct".
+Errors fail the run; warnings don't. But warnings are where the quiet damage lives: an unknown key is *ignored*, so a single misspelled key — `validation.endpoint_url` for `validation.endpoint` — warns once and leaves the connector with no credential check at all, while the run still exits 0. Resolve every warning or consciously accept it; don't read "0 errors" as "correct".
 
 `references/troubleshooting.md` maps the validator's messages to causes and fixes. The four that account for most failures:
 
 - **`'text' is not a valid type`** — use `string`.
 - **`request.json: expected str, got dict`** — `json:` and `query:` are strings, not YAML mappings. Use a `>` folded scalar and paste the body verbatim.
-- **`unknown key` on `validation.endpoint_url`** — the key is `validation.endpoint`. (The README's table is wrong here too.)
+- **`unknown key` on `validation.endpoint_url`** — the key is `validation.endpoint`.
 - **`placeholder <x> doesn't match…`** — a cursor placeholder must match a `cursor: true` field's `name` character-for-character.
 
 Then re-read your own diff against the saved responses from Step 3: does each `response.path` still match, and does every field name appear in the JSON? That's the check the validator can't do for you.

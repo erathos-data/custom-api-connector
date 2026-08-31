@@ -19,10 +19,10 @@ no credential check while still exiting 0.
 
 | Message | Cause | Fix |
 |---|---|---|
-| `'text' is not a valid type` | The README lists `text`; the validator doesn't accept it. | Use `string`. Valid: `boolean`, `date`, `float`, `integer`, `json`, `string`, `time`, `timestamp`, `unix_timestamp`. |
+| `'text' is not a valid type` | There is no `text` type. | Use `string`. Valid: `boolean`, `date`, `float`, `integer`, `json`, `string`, `time`, `timestamp`, `unix_timestamp`. |
 | `request.json: expected str, got dict` | `json:` written as nested YAML. | It's a string. Use a `>` folded scalar and paste the JSON body verbatim. Same for `query:`. |
 | `request.params: expected dict, got str` | The inverse — `params` *is* a mapping. | Write it as YAML key/value pairs. |
-| `unknown key (allowed: endpoint, request)` on `validation.endpoint_url` | README error — the key is `endpoint`. | Rename to `validation.endpoint`. |
+| `unknown key (allowed: endpoint, request)` on `validation.endpoint_url` | The key is `endpoint`. | Rename to `validation.endpoint`. |
 | `unknown key` on `_default.yml` `request.params` | Connector-level `request` allows only `url_base`, `method`, `headers`, `cursor_timestamp_format`. | Move params onto the individual endpoints. |
 | `placeholder <x> doesn't match any field with cursor: true…` | Cursor placeholder spelling. | It must match the field's `name` character-for-character — `<updatedAt>` for a field named `updatedAt`, not `<updated_at>`. |
 | `placeholder <x> … only auth placeholders are valid here` | A `<page>` or cursor token inside `request.endpoint` / `url_base`. | Only auth and `dependency.as` placeholders work in URL-shaped strings. Move pagination into `params`/`json`/`query`. |
