@@ -219,7 +219,7 @@ Ground each "where to get it" the way you ground a `response.path`. If the docs 
 
 For an `oauth2` entry nobody pastes a token. The user registers an OAuth app in the provider's console to get `client_id` / `client_secret`, and the rest happens through the connect flow. Tell them the redirect/callback URL that has to be registered on that app, and the scopes the endpoints you built require.
 
-Then the Erathos side, briefly. In the datasource catalog the connector is found fastest by typing the `name` from `_default.yml` straight into the search bar. Creating the datasource asks for exactly the fields you declared, in that order, with `secret` entries masked and `variable` entries in the clear. If you wrote a `validation` block, say what it calls (e.g. `GET /me`) and that a wrong credential fails right there on save rather than at the first sync.
+Then the Erathos side, briefly. In the datasource catalog the connector appears under whatever `name` you set in `_default.yml`, carrying a **Custom** tag. Quote that name back to the user — they picked it, but they won't remember how you spelled it — and tell them that typing it into the catalog's search bar is the fastest way to it. Creating the datasource asks for exactly the fields you declared, in that order, with `secret` entries masked and `variable` entries in the clear. If you wrote a `validation` block, say what it calls (e.g. `GET /me`) and that a wrong credential fails right there on save rather than at the first sync.
 
 ## Reference files
 
