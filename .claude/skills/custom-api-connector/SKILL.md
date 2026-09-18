@@ -49,6 +49,7 @@ Write the answers down (a scratch file is fine). You will use every one of them,
 - Base URL. Is any part of it per-tenant (a subdomain, an account ID)? That part becomes an `authentication` entry of `type: variable` referenced as `<name>` inside `url_base`.
 - How are credentials sent — header, query param, OAuth2 authorization-code flow?
 - Is there a cheap "who am I" endpoint (`/me`, `/whoami`, `/account`) to validate stored credentials before a sync starts?
+- Where does the user *get* each credential — which page of the provider's console issues it, what the value looks like, whether it's admin-only or gated behind a plan? Note the URL while the docs are open in front of you; reconstructing this from memory in Step 9 is how invented console paths get shipped.
 
 **Per endpoint**
 - Method and path.
@@ -202,6 +203,23 @@ Then re-read your own diff against the saved responses from Step 3: does each `r
 The connector is deployed by pushing to a repo Erathos watches — every push to the watched repository rebuilds the image, after which it appears in the datasource catalog with a **Custom** badge.
 
 Commit the connector folder and push (branch + PR if the repo has review conventions — check before pushing to a default branch). If the repo isn't being watched yet, tell the user the one-time setup: install the Erathos GitHub App, then **Settings → Workspace → Repositories → Add repository** in `owner/repo` form. Don't push to a shared repo without the user's go-ahead — a push here is a deploy.
+
+## Step 9 — Explain where the credentials come from
+
+The connector is finished, but nothing syncs until someone fills in the credential fields — and those values come from the source API's console, not from Erathos. Close every connector with a short handoff, written in the language the user is speaking.
+
+Walk the `authentication:` entries of `_default.yml` in the order they appear. For each one:
+
+- **What it is**, and whether it's `required`. Give the `name` as declared plus a plain-language label — `name` is a code identifier, so the field the user sees may read differently.
+- **Where to get it**: the menu path and/or the direct URL, taken from the documentation you actually read while building this connector. Link that page.
+- **What the value looks like** — a prefix, a length, a shape (`acme_live_…`, a UUID, the `acme` out of `acme.vendor.com`). This is what lets the user tell a right value from a wrong one before pasting it.
+- **What will bite them**: shown only once at creation, admin/owner-only, behind a paid plan or a feature flag, separate sandbox and production keys, the scopes the endpoints you built need, IP allowlists, expiry.
+
+Ground each "where to get it" the way you ground a `response.path`. If the docs you read say where the key is issued, say it and link it. If they never say, say *that* — and point at where to ask (the provider's console, the account's support contact) instead of inventing a `Settings → Developers → API Keys` that sounds right. A fabricated path costs the user a support ticket and costs you their trust in the rest of the handoff.
+
+For an `oauth2` entry nobody pastes a token. The user registers an OAuth app in the provider's console to get `client_id` / `client_secret`, and the rest happens through the connect flow. Tell them the redirect/callback URL that has to be registered on that app, and the scopes the endpoints you built require.
+
+Then the Erathos side, briefly. In the datasource catalog the connector is found fastest by typing the `name` from `_default.yml` straight into the search bar. Creating the datasource asks for exactly the fields you declared, in that order, with `secret` entries masked and `variable` entries in the clear. If you wrote a `validation` block, say what it calls (e.g. `GET /me`) and that a wrong credential fails right there on save rather than at the first sync.
 
 ## Reference files
 
